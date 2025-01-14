@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "estimatesalary"
+version = "0.1.0"
+description = ""
+authors = ["spawlov <107248409+spawlov@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python = 3.12
+check_untyped_defs = true
+ignore_errors = false
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[tool.black]
+line-length = 120
