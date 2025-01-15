@@ -1,4 +1,3 @@
-import asyncio
 import itertools
 import logging
 from datetime import datetime, timedelta
@@ -13,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def predict_rub_salary(salary_from: int, salary_to: int) -> int:
+def predict_rub_salary(salary_from: int, salary_to: int) -> int:
     if salary_from and salary_to:
         return round((salary_from + salary_to) / 2)
     if salary_from:
@@ -24,7 +23,7 @@ async def predict_rub_salary(salary_from: int, salary_to: int) -> int:
         return 0
 
 
-async def get_vacancies_from_hh(
+def get_vacancies_from_hh(
     language: str,
     days_ago: int,
 ):
@@ -49,8 +48,8 @@ async def get_vacancies_from_hh(
     vacancy_list = []
     payload = {}
     for page in itertools.count(1):
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, headers=headers, params=params, timeout=30)
+        with httpx.Client() as client:
+            response = client.get(url, headers=headers, params=params, timeout=30)
         response.raise_for_status()
         payload = response.json()
         vacancy_list += payload["items"]
@@ -61,10 +60,9 @@ async def get_vacancies_from_hh(
     return language, payload
 
 
-async def get_stats_from_hh(languages: list[str], days_ago: int = 7) -> list[dict[str, Any]]:
+def get_stats_from_hh(languages: list[str], days_ago: int = 7) -> list[dict[str, Any]]:
     result = []
-    tasks = [get_vacancies_from_hh(language, days_ago) for language in languages]
-    statistics = await asyncio.gather(*tasks)
+    statistics = [get_vacancies_from_hh(language, days_ago) for language in languages]
     for statistic in statistics:
         language, response = statistic
         vacancies = [vacancy for vacancy in response["items"] if vacancy["salary"]]
@@ -72,7 +70,7 @@ async def get_stats_from_hh(languages: list[str], days_ago: int = 7) -> list[dic
         average_salary = int(
             sum(
                 [
-                    await predict_rub_salary(
+                    predict_rub_salary(
                         vacancy["salary"]["from"],
                         vacancy["salary"]["to"],
                     )
@@ -93,7 +91,7 @@ async def get_stats_from_hh(languages: list[str], days_ago: int = 7) -> list[dic
     return result
 
 
-async def main() -> None:
+def main() -> None:
     logger.setLevel(logging.INFO)
     log_handler = logging.FileHandler("main.log", encoding="utf-8")
     log_handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
@@ -112,9 +110,9 @@ async def main() -> None:
     ]
     logger.info("Starting process for HH...")
     t0 = time()
-    ic(await get_stats_from_hh(languages, 1))
+    ic(get_stats_from_hh(languages, days_ago=30))
     logger.info(f"Time to process HH: {time() - t0:.4f}sec.")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
