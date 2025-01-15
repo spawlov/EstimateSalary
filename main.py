@@ -12,6 +12,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def get_hh_city_id(city_name: str) -> int:
+    with httpx.Client() as client:
+        response = client.get("https://api.hh.ru/areas")
+
+    areas = response.json()
+
+    def find_city(areas: Any, city_name: str) -> int:
+        for area in areas:
+            if area["name"].lower() == city_name.lower():
+                return area["id"]
+            if "areas" in area:
+                city_id = find_city(area["areas"], city_name)
+                if city_id:
+                    return city_id
+        return 0
+
+    return find_city(areas, city_name)
+
+
 def predict_rub_salary(salary_from: int, salary_to: int) -> int:
     if salary_from and salary_to:
         return round((salary_from + salary_to) / 2)
@@ -25,10 +44,12 @@ def predict_rub_salary(salary_from: int, salary_to: int) -> int:
 
 def get_vacancies_from_hh(
     language: str,
+    city_id: int,
     days_ago: int,
 ):
     today = datetime.now()
     date_days_ago = today - timedelta(days=days_ago)
+
     url = "https://api.hh.ru/vacancies/"
 
     headers = {
@@ -39,11 +60,12 @@ def get_vacancies_from_hh(
 
     params = {
         "text": language,
-        "area": 1,
         "per_page": 100,
         "date_from": date_days_ago.strftime("%Y-%m-%d"),
         "date_to": today.strftime("%Y-%m-%d"),
     }
+    if city_id:
+        params["area"] = city_id
 
     vacancy_list = []
     payload = {}
@@ -60,24 +82,29 @@ def get_vacancies_from_hh(
     return language, payload
 
 
-def get_stats_from_hh(languages: list[str], days_ago: int = 7) -> list[dict[str, Any]]:
+def get_stats_from_hh(languages: list[str], city: str | None = None, days_ago: int = 7) -> list[dict[str, Any]]:
+    city_id = get_hh_city_id(city) if city else 0
     result = []
-    statistics = [get_vacancies_from_hh(language, days_ago) for language in languages]
+    statistics = [get_vacancies_from_hh(language, city_id, days_ago) for language in languages]
     for statistic in statistics:
         language, response = statistic
         vacancies = [vacancy for vacancy in response["items"] if vacancy["salary"]]
         vacancies = [vacancy for vacancy in vacancies if vacancy["salary"]["currency"] == "RUR"]
-        average_salary = int(
-            sum(
-                [
-                    predict_rub_salary(
-                        vacancy["salary"]["from"],
-                        vacancy["salary"]["to"],
-                    )
-                    for vacancy in vacancies
-                ]
+        average_salary = (
+            int(
+                sum(
+                    [
+                        predict_rub_salary(
+                            vacancy["salary"]["from"],
+                            vacancy["salary"]["to"],
+                        )
+                        for vacancy in vacancies
+                    ]
+                )
+                / len(vacancies)
             )
-            / len(vacancies)
+            if len(vacancies)
+            else 0
         )
         result.append(
             {
@@ -110,7 +137,7 @@ def main() -> None:
     ]
     logger.info("Starting process for HH...")
     t0 = time()
-    ic(get_stats_from_hh(languages, days_ago=30))
+    ic(get_stats_from_hh(languages, days_ago=7))
     logger.info(f"Time to process HH: {time() - t0:.4f}sec.")
 
 
