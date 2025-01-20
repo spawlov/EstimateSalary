@@ -21,6 +21,7 @@ async def print_table(title: str, data: list[dict[str, Any]]) -> None:
         2: "center",
         3: "right",
     }
+
     terminal_table = [
         [
             "Язык программирования",
@@ -29,6 +30,7 @@ async def print_table(title: str, data: list[dict[str, Any]]) -> None:
             "Средняя зарплата",
         ]
     ]
+
     for row in data:
         for language, lang_details in row.items():
             terminal_table.append(
@@ -39,8 +41,10 @@ async def print_table(title: str, data: list[dict[str, Any]]) -> None:
                     lang_details["average_salary"],
                 ]
             )
+
     table = SingleTable(terminal_table, title)
     table.justify_columns.update(column_aligns)
+
     print(table.table)  # noqa
 
 
