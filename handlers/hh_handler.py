@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 async def get_hh_city_id(base_url: str, city_name: str) -> int:
     async with httpx.AsyncClient(base_url=base_url) as client:
-        response = await client.get(url="/areas", timeout=30)
+        response = await client.get(url="areas/", timeout=30)
     areas = response.json()
 
     def find_city(areas: Any, city_name: str) -> int:
@@ -56,11 +56,10 @@ async def get_vacancies_from_hh(
         params["area"] = city_id
 
     vacancy_list = []
-    payload = {}
     async with httpx.AsyncClient(base_url=base_url, headers=headers) as client:
         for page in itertools.count(1):
             params["page"] = page
-            response = await client.get(url="/vacancies", params=params, timeout=30)
+            response = await client.get(url="vacancies/", params=params, timeout=30)
             response.raise_for_status()
             payload = response.json()
             vacancy_list += payload["items"]
