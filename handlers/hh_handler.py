@@ -32,6 +32,7 @@ async def get_vacancies_from_hh(
     city_id: int,
     days_ago: int,
 ) -> tuple[str, dict[str, list]]:
+    print("HeadHunter in the process...", end="\r")  # noqa
 
     today = datetime.now()
     date_days_ago = today - timedelta(days=days_ago)
@@ -62,7 +63,7 @@ async def get_vacancies_from_hh(
             if page >= payload["pages"] - 1:
                 break
             params["page"] = page
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
     payload["items"] = vacancy_list
     return language.strip(), payload
 

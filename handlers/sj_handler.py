@@ -16,6 +16,7 @@ async def get_vacancies_from_sj(
     days_ago: int,
     city: str | None = None,
 ) -> tuple[str, dict[str, list]]:
+    print("SuperJob in the process...", end="\r")  # noqa
 
     today = int(time.time())
     date_days_ago = int((datetime.now() - timedelta(days=days_ago)).timestamp())
