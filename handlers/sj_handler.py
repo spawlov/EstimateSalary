@@ -1,6 +1,5 @@
 import asyncio
 import itertools
-import logging
 import time
 from datetime import datetime, timedelta
 from typing import Any
@@ -8,9 +7,6 @@ from typing import Any
 from handlers.handler_utils import predict_rub_salary
 
 import httpx
-
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger(__name__)
 
 
 async def get_vacancies_from_sj(

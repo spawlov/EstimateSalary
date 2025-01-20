@@ -1,15 +1,11 @@
 import asyncio
 import itertools
-import logging
 from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
 
 from .handler_utils import predict_rub_salary
-
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger(__name__)
 
 
 async def get_hh_city_id(base_url: str, city_name: str) -> int:
@@ -66,7 +62,7 @@ async def get_vacancies_from_hh(
             if page >= payload["pages"] - 1:
                 break
             params["page"] = page
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
     payload["items"] = vacancy_list
     return language.strip(), payload
 
