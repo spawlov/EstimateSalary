@@ -1,6 +1,6 @@
 # Узнай будущую зарплату
 
-### Собираем статистику с сайтов [SuperJob](https://www.superjob.ru/) и [HeadHunter](https://hh.ru) по заданным профессиям, за определенный период
+### Собираем статистику по средней зарплате с сайтов [SuperJob](https://www.superjob.ru/) и [HeadHunter](https://hh.ru) по заданным профессиям, за определенный период
 
 ![CaptureImage](img/capture.png)
 
