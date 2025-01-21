@@ -63,7 +63,7 @@ async def get_vacancies_from_hh(
             if page >= payload["pages"] - 1:
                 break
             params["page"] = page
-            await asyncio.sleep(3)
+            await asyncio.sleep(3)  # pause to eliminate error 403
     payload["items"] = vacancy_list
     return language.strip(), payload
 
