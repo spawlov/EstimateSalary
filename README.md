@@ -26,3 +26,28 @@ git clone https://github.com/spawlov/EstimateSalary.git
 poetry install
 poetry shell
 ```
+
+- Получите API токен на сайте [SuperJob](https://api.superjob.ru/)
+
+- Создайте файл ```.env```
+
+```text
+LANGS=JavaScript,Java,Python,Ruby,PHP,C++,C#,C,Go - Список языков для запроса (через запятую, без пробела)
+CITY=Москва (Город, по которому будет производиться поиск вакансий)
+DAYS=30 (Период, за который будет производиться поиск вакансий)
+
+HH_BASE_URL=https://api.hh.ru/ (Базовый адрес API HeadHunter)
+
+SJ_BASE_URL=https://api.superjob.ru/2.0/ (Базовый адрес API SuperJob)
+SJ_KEY=<API_TOKEN_SUPER_JOB>
+```
+
+- Программа запускается командой:
+
+```shell
+python main.py
+```
+
+<hr>
+
+#### Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
