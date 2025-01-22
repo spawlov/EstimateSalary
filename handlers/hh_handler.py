@@ -78,8 +78,7 @@ async def get_stats_from_hh(
     statistics = await asyncio.gather(*tasks)
 
     result = []
-    for statistic in statistics:
-        language, response = statistic
+    for language, response in statistics:
         vacancies = [vacancy for vacancy in response["items"] if vacancy["salary"]]
         vacancies = [vacancy for vacancy in vacancies if vacancy["salary"]["currency"] == "RUR"]
         average_salary = (

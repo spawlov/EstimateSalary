@@ -61,8 +61,7 @@ async def get_stats_from_sj(
     statistics = await asyncio.gather(*tasks)
 
     result = []
-    for statistic in statistics:
-        language, response = statistic
+    for language, response in statistics:
         vacancies = [
             vacancy
             for vacancy in response["objects"]
