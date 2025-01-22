@@ -12,7 +12,7 @@ from handlers import get_stats_from_hh, get_stats_from_sj
 logger: Logger = logging.getLogger(__name__)
 
 
-def print_table(title: str, data: list[dict[str, Any]]) -> None:
+def print_table(title: str, statistic: list[dict[str, Any]]) -> None:
     column_aligns = {
         1: "center",
         2: "center",
@@ -28,7 +28,7 @@ def print_table(title: str, data: list[dict[str, Any]]) -> None:
         ]
     ]
 
-    for row in data:
+    for row in statistic:
         for language, lang_details in row.items():
             terminal_table.append(
                 [
