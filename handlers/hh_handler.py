@@ -8,23 +8,22 @@ import httpx
 from .handler_utils import predict_rub_salary
 
 
+def find_city(areas: Any, city_name: str) -> int:
+    for area in areas:
+        if area["name"].lower() == city_name.lower():
+            return area["id"]
+        if "areas" in area:
+            city_id = find_city(area["areas"], city_name)
+            if city_id:
+                return city_id
+    return 0
+
+
 async def get_hh_city_id(city_name: str) -> int:
     base_url = "https://api.hh.ru/"
-
     async with httpx.AsyncClient(base_url=base_url) as client:
         response = await client.get(url="areas/", timeout=30)
     areas = response.json()
-
-    def find_city(areas: Any, city_name: str) -> int:
-        for area in areas:
-            if area["name"].lower() == city_name.lower():
-                return area["id"]
-            if "areas" in area:
-                city_id = find_city(area["areas"], city_name)
-                if city_id:
-                    return city_id
-        return 0
-
     return find_city(areas, city_name)
 
 
