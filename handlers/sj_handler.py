@@ -17,6 +17,8 @@ async def get_vacancies_from_sj(
 ) -> tuple[str, dict[str, list]]:
     today = int(time.time())
     date_days_ago = int((datetime.now() - timedelta(days=days_ago)).timestamp())
+    catalog = 33  # https://api.superjob.ru/2.0/catalogues/
+    results_per_page = 100
 
     base_url = "https://api.superjob.ru/2.0/"
     headers = {
@@ -28,8 +30,8 @@ async def get_vacancies_from_sj(
     params = {
         "date_published_from": date_days_ago,
         "date_published_to": today,
-        "catalogues": 33,
-        "count": 100,
+        "catalogues": catalog,
+        "count": results_per_page,
         "keyword": language.strip(),
     }
     if city:
