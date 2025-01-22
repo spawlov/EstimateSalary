@@ -4,9 +4,9 @@ import time
 from datetime import datetime, timedelta
 from typing import Any
 
-from handlers.handler_utils import predict_rub_salary
-
 import httpx
+
+from handlers.handler_utils import predict_rub_salary
 
 
 async def get_vacancies_from_sj(
@@ -16,8 +16,6 @@ async def get_vacancies_from_sj(
     days_ago: int,
     city: str | None = None,
 ) -> tuple[str, dict[str, list]]:
-    print("SuperJob in the process...", end="\r")  # noqa
-
     today = int(time.time())
     date_days_ago = int((datetime.now() - timedelta(days=days_ago)).timestamp())
 

@@ -32,8 +32,6 @@ async def get_vacancies_from_hh(
     city_id: int,
     days_ago: int,
 ) -> tuple[str, dict[str, list]]:
-    print("HeadHunter in the process...", end="\r")  # noqa
-
     today = datetime.now()
     date_days_ago = today - timedelta(days=days_ago)
 
