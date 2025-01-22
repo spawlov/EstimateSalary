@@ -52,19 +52,19 @@ async def get_vacancies_from_hh(
     if city_id:
         params["area"] = city_id
 
-    vacancy_list = []
+    vacancies = []
     async with httpx.AsyncClient(base_url=base_url, headers=headers) as client:
         for page in itertools.count(1):
             params["page"] = page
             response = await client.get(url="vacancies/", params=params, timeout=30)
             response.raise_for_status()
             payload = response.json()
-            vacancy_list += payload["items"]
+            vacancies += payload["items"]
             if page >= payload["pages"] - 1:
                 break
             params["page"] = page
             await asyncio.sleep(3)  # pause to eliminate error 403
-    payload["items"] = vacancy_list
+    payload["items"] = vacancies
     return language.strip(), payload
 
 

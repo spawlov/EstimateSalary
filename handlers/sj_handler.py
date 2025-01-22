@@ -37,17 +37,17 @@ async def get_vacancies_from_sj(
     if city:
         params["town"] = city
 
-    vacancy_list = []
+    vacancies = []
     async with httpx.AsyncClient(base_url=base_url, headers=headers) as client:
         for page in itertools.count(0):
             params["page"] = page
             response = await client.get(url="vacancies/", params=params, timeout=30)
             response.raise_for_status()
             payload = response.json()
-            vacancy_list += payload["objects"]
+            vacancies += payload["objects"]
             if not payload["more"]:
                 break
-    payload["objects"] = vacancy_list
+    payload["objects"] = vacancies
     return language.strip(), payload
 
 
