@@ -77,18 +77,19 @@ async def get_stats_from_hh(
     tasks = [get_vacancies_from_hh(language, city_id, days_ago) for language in languages]
     statistics = await asyncio.gather(*tasks)
 
-    result = []
+    statistic = []
     for language, response in statistics:
         average_salary = 0
         vacancies = [vacancy for vacancy in response["items"] if vacancy["salary"]]
         vacancies = [vacancy for vacancy in vacancies if vacancy["salary"]["currency"] == "RUR"]
+
         if len(vacancies):
             salaries = [
                 await predict_rub_salary(vacancy["salary"]["from"], vacancy["salary"]["to"]) for vacancy in vacancies
             ]
             average_salary = int(sum(salaries) / len(vacancies))
 
-        result.append(
+        statistic.append(
             {
                 language: {
                     "vacancies_found": response["found"],
@@ -97,4 +98,5 @@ async def get_stats_from_hh(
                 },
             }
         )
-    return result
+
+    return statistic

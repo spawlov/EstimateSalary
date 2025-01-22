@@ -60,7 +60,7 @@ async def get_stats_from_sj(
     tasks = [get_vacancies_from_sj(secret_key, language, days_ago, city) for language in languages]
     statistics = await asyncio.gather(*tasks)
 
-    result = []
+    statistic = []
     for language, response in statistics:
         average_salary = 0
         vacancies = [
@@ -68,13 +68,14 @@ async def get_stats_from_sj(
             for vacancy in response["objects"]
             if vacancy["currency"] == "rub" and vacancy["payment_from"] or vacancy["payment_to"]
         ]
+
         if len(vacancies):
             salaries = [
                 await predict_rub_salary(vacancy["payment_from"], vacancy["payment_to"]) for vacancy in vacancies
             ]
             average_salary = int(sum(salaries) / len(vacancies))
 
-        result.append(
+        statistic.append(
             {
                 language: {
                     "vacancies_found": response["total"],
@@ -83,4 +84,5 @@ async def get_stats_from_sj(
                 }
             }
         )
-    return result
+
+    return statistic
