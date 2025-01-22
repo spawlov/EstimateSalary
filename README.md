@@ -36,9 +36,6 @@ LANGS=JavaScript,Java,Python,Ruby,PHP,C++,C#,C,Go - Список языков д
 CITY=Москва (Город, по которому будет производиться поиск вакансий)
 DAYS=30 (Период, за который будет производиться поиск вакансий)
 
-HH_BASE_URL=https://api.hh.ru/ (Базовый адрес API HeadHunter)
-
-SJ_BASE_URL=https://api.superjob.ru/2.0/ (Базовый адрес API SuperJob)
 SJ_KEY=<API_TOKEN_SUPER_JOB>
 ```
 
