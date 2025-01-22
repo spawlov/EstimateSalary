@@ -62,27 +62,18 @@ async def get_stats_from_sj(
 
     result = []
     for language, response in statistics:
+        average_salary = 0
         vacancies = [
             vacancy
             for vacancy in response["objects"]
             if vacancy["currency"] == "rub" and vacancy["payment_from"] or vacancy["payment_to"]
         ]
-        average_salary = (
-            int(
-                sum(
-                    [
-                        await predict_rub_salary(
-                            vacancy["payment_from"],
-                            vacancy["payment_to"],
-                        )
-                        for vacancy in vacancies
-                    ]
-                )
-                / len(vacancies)
-            )
-            if len(vacancies)
-            else 0
-        )
+        if len(vacancies):
+            salaries = [
+                await predict_rub_salary(vacancy["payment_from"], vacancy["payment_to"]) for vacancy in vacancies
+            ]
+            average_salary = int(sum(salaries) / len(vacancies))
+
         result.append(
             {
                 language: {

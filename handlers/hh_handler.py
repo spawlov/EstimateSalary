@@ -79,24 +79,15 @@ async def get_stats_from_hh(
 
     result = []
     for language, response in statistics:
+        average_salary = 0
         vacancies = [vacancy for vacancy in response["items"] if vacancy["salary"]]
         vacancies = [vacancy for vacancy in vacancies if vacancy["salary"]["currency"] == "RUR"]
-        average_salary = (
-            int(
-                sum(
-                    [
-                        await predict_rub_salary(
-                            vacancy["salary"]["from"],
-                            vacancy["salary"]["to"],
-                        )
-                        for vacancy in vacancies
-                    ]
-                )
-                / len(vacancies)
-            )
-            if len(vacancies)
-            else 0
-        )
+        if len(vacancies):
+            salaries = [
+                await predict_rub_salary(vacancy["salary"]["from"], vacancy["salary"]["to"]) for vacancy in vacancies
+            ]
+            average_salary = int(sum(salaries) / len(vacancies))
+
         result.append(
             {
                 language: {
