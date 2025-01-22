@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from logging import Logger
+from time import time
 from typing import Any
 
 from dotenv import find_dotenv, load_dotenv
@@ -60,12 +61,18 @@ async def main() -> None:
     days_ago: int = int(os.getenv("DAYS", 30))
 
     logger.info("SuperJob process started...")
+    time_start = time()
     sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
+    time_end = time()
     print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
+    logger.info(f"SuperJob process is completed in {time_end - time_start} sec.")
 
     logger.info("HeadHunter process started...")
+    time_start = time()
     hh_result = await get_stats_from_hh(languages, city, days_ago)
+    time_end = time()
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
+    logger.info(f"HeadHunter process is completed in {time_end - time_start} sec.")
 
 
 if __name__ == "__main__":
