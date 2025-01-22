@@ -61,11 +61,11 @@ async def main() -> None:
     city: str | None = os.getenv("CITY", None)
     days_ago: int = int(os.getenv("DAYS", 7))
 
-    logger.info("SuperJob in the process started...")
+    logger.info("SuperJob process started...")
     sj_results = await get_stats_from_sj(sj_base_url, sj_key, languages, city, days_ago)
     print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
 
-    logger.info("HeadHunter in the process started...")
+    logger.info("HeadHunter process started...")
     hh_result = await get_stats_from_hh(hh_base_url, languages, city, days_ago)
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
 
