@@ -8,7 +8,9 @@ import httpx
 from .handler_utils import predict_rub_salary
 
 
-async def get_hh_city_id(base_url: str, city_name: str) -> int:
+async def get_hh_city_id(city_name: str) -> int:
+    base_url = "https://api.hh.ru/"
+
     async with httpx.AsyncClient(base_url=base_url) as client:
         response = await client.get(url="areas/", timeout=30)
     areas = response.json()
@@ -27,7 +29,6 @@ async def get_hh_city_id(base_url: str, city_name: str) -> int:
 
 
 async def get_vacancies_from_hh(
-    base_url: str,
     language: str,
     city_id: int,
     days_ago: int,
@@ -35,6 +36,7 @@ async def get_vacancies_from_hh(
     today = datetime.now()
     date_days_ago = today - timedelta(days=days_ago)
 
+    base_url = "https://api.hh.ru/"
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -67,13 +69,12 @@ async def get_vacancies_from_hh(
 
 
 async def get_stats_from_hh(
-    base_url: str,
     languages: list[str],
     city: str | None = None,
     days_ago: int = 7,
 ) -> list[dict[str, Any]]:
-    city_id = await get_hh_city_id(base_url, city) if city else 0
-    tasks = [get_vacancies_from_hh(base_url, language, city_id, days_ago) for language in languages]
+    city_id = await get_hh_city_id(city) if city else 0
+    tasks = [get_vacancies_from_hh(language, city_id, days_ago) for language in languages]
     statistics = await asyncio.gather(*tasks)
 
     result = []

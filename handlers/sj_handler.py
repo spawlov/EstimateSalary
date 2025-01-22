@@ -10,7 +10,6 @@ from handlers.handler_utils import predict_rub_salary
 
 
 async def get_vacancies_from_sj(
-    base_url: str,
     secret_key: str,
     language: str,
     days_ago: int,
@@ -19,6 +18,7 @@ async def get_vacancies_from_sj(
     today = int(time.time())
     date_days_ago = int((datetime.now() - timedelta(days=days_ago)).timestamp())
 
+    base_url = "https://api.superjob.ru/2.0/"
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -50,13 +50,12 @@ async def get_vacancies_from_sj(
 
 
 async def get_stats_from_sj(
-    base_url: str,
     secret_key: str,
     languages: list[str],
     city: str | None = None,
     days_ago: int = 7,
 ) -> list[dict[str, Any]]:
-    tasks = [get_vacancies_from_sj(base_url, secret_key, language, days_ago, city) for language in languages]
+    tasks = [get_vacancies_from_sj(secret_key, language, days_ago, city) for language in languages]
     statistics = await asyncio.gather(*tasks)
 
     result = []

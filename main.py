@@ -54,19 +54,17 @@ async def main() -> None:
 
     load_dotenv(find_dotenv())
 
-    hh_base_url = os.environ["HH_BASE_URL"]
-    sj_base_url = os.environ["SJ_BASE_URL"]
     sj_key: str = os.environ["SJ_KEY"]
     languages: list[str] = os.getenv("LANGS", "JavaScript, Java, Python").split(",")
     city: str | None = os.getenv("CITY", None)
-    days_ago: int = int(os.getenv("DAYS", 7))
+    days_ago: int = int(os.getenv("DAYS", 30))
 
     logger.info("SuperJob process started...")
-    sj_results = await get_stats_from_sj(sj_base_url, sj_key, languages, city, days_ago)
+    sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
     print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
 
     logger.info("HeadHunter process started...")
-    hh_result = await get_stats_from_hh(hh_base_url, languages, city, days_ago)
+    hh_result = await get_stats_from_hh(languages, city, days_ago)
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
 
 
