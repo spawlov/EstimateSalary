@@ -1,3 +1,61 @@
+import json
+import os
+from time import time
+from typing import Any
+
+import aiofiles
+import httpx
+
+
+async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret: str) -> None:
+    url = "https://hh.ru/oauth/token"
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    params = {
+        "redirect_uri": hh_uri,
+        "client_id": hh_id,
+        "client_secret": hh_secret,
+        "code": hh_code,
+        "grant_type": "authorization_code",
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url=url, headers=headers, params=params)
+    response.raise_for_status()
+    credentials = response.json()
+    credentials["expires_in"] += int(time())
+    async with aiofiles.open(".hh_credentials.json", "w") as file:
+        await file.write(json.dumps(credentials))
+        os.chmod(".hh_credentials.json", 0o600)
+
+
+async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
+    url = "https://hh.ru/oauth/token"
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    params = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url=url, headers=headers, params=params)
+    response.raise_for_status()
+    credentials = response.json()
+    credentials["expires_in"] += int(time())
+    async with aiofiles.open(".hh_credentials.json", "w") as file:
+        await file.write(json.dumps(credentials))
+    return credentials
+
+
+async def get_hh_token() -> str:
+    async with aiofiles.open(".hh_credentials.json", "r") as file:
+        credentials = json.loads(await file.read())
+    if credentials["expires_in"] <= time():
+        credentials = await refresh_hh_token(credentials["refresh_token"])
+    return credentials["access_token"]
+
+
 async def predict_rub_salary(salary_from: int, salary_to: int) -> int:
     if salary_from and salary_to:
         return round((salary_from + salary_to) / 2)

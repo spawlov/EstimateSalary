@@ -23,11 +23,13 @@ async def get_hh_city_id(city_name: str) -> int:
     base_url = "https://api.hh.ru/"
     async with httpx.AsyncClient(base_url=base_url) as client:
         response = await client.get(url="areas/", timeout=30)
+    response.raise_for_status()
     areas = response.json()
     return find_city(areas, city_name)
 
 
 async def get_vacancies_from_hh(
+    hh_key: str,
     language: str,
     city_id: int,
     days_ago: int,
@@ -40,6 +42,7 @@ async def get_vacancies_from_hh(
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/39.0.2171.95 Safari/537.36",
+        "Authorization": f"Bearer {hh_key}",
     }
     params = {
         "text": language.strip(),
@@ -62,18 +65,18 @@ async def get_vacancies_from_hh(
             if page >= payload["pages"] - 1:
                 break
             params["page"] = page
-            await asyncio.sleep(3)  # pause to eliminate error 403
     payload["items"] = vacancies
     return language.strip(), payload
 
 
 async def get_stats_from_hh(
+    hh_key: str,
     languages: list[str],
     city: str | None = None,
     days_ago: int = 7,
 ) -> list[dict[str, Any]]:
     city_id = await get_hh_city_id(city) if city else 0
-    tasks = [get_vacancies_from_hh(language, city_id, days_ago) for language in languages]
+    tasks = [get_vacancies_from_hh(hh_key, language, city_id, days_ago) for language in languages]
     statistics = await asyncio.gather(*tasks)
 
     statistic = []
