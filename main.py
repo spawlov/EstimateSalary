@@ -78,6 +78,8 @@ async def main() -> None:
         hh_code = input("Введите код из адресной строки браузера...\n ").strip()
         await create_hh_credentials(hh_uri, hh_id, hh_code, hh_secret)
 
+    hh_key = await get_hh_token()
+
     logger.info("SuperJob process started...")
     time_start = time()
     sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
@@ -87,7 +89,7 @@ async def main() -> None:
 
     logger.info("HeadHunter process started...")
     time_start = time()
-    hh_result = await get_stats_from_hh(await get_hh_token(), languages, city, days_ago)
+    hh_result = await get_stats_from_hh(hh_key, languages, city, days_ago)
     time_end = time()
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
     logger.info(f"HeadHunter process is completed in {time_end - time_start} sec.")
