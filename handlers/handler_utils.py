@@ -24,7 +24,7 @@ async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret
     response.raise_for_status()
     credentials = response.json()
     credentials["expires_in"] += int(time())
-    async with aiofiles.open(".hh_credentials.json", "w") as file:
+    async with aiofiles.open(".hh_credentials.json", "w", encoding="utf-8") as file:
         await file.write(json.dumps(credentials))
         os.chmod(".hh_credentials.json", 0o600)
 
@@ -43,13 +43,14 @@ async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
     response.raise_for_status()
     credentials = response.json()
     credentials["expires_in"] += int(time())
-    async with aiofiles.open(".hh_credentials.json", "w") as file:
+    async with aiofiles.open(".hh_credentials.json", "w", encoding="utf-8") as file:
         await file.write(json.dumps(credentials))
+        os.chmod(".hh_credentials.json", 0o600)
     return credentials
 
 
 async def get_hh_token() -> str:
-    async with aiofiles.open(".hh_credentials.json", "r") as file:
+    async with aiofiles.open(".hh_credentials.json", "r", encoding="utf-8") as file:
         credentials = json.loads(await file.read())
     if credentials["expires_in"] <= time():
         credentials = await refresh_hh_token(credentials["refresh_token"])
