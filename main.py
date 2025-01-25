@@ -29,7 +29,7 @@ def print_table(title: str, statistic: list[dict[str, Any]]) -> None:
             "Вакансий найдено",
             "Вакансий обработано",
             "Средняя зарплата",
-        ]
+        ],
     ]
 
     for row in statistic:
@@ -40,7 +40,7 @@ def print_table(title: str, statistic: list[dict[str, Any]]) -> None:
                     lang_details["vacancies_found"],
                     lang_details["vacancies_processed"],
                     lang_details["average_salary"],
-                ]
+                ],
             )
 
     table = SingleTable(terminal_table, title)

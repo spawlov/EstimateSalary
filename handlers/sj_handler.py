@@ -81,8 +81,8 @@ async def get_stats_from_sj(
                     "vacancies_found": response["total"],
                     "vacancies_processed": len(vacancies),
                     "average_salary": f"{average_salary:,}₽",
-                }
-            }
+                },
+            },
         )
 
     return statistic

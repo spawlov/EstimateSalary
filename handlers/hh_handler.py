@@ -98,7 +98,7 @@ async def get_stats_from_hh(
                     "vacancies_processed": len(vacancies),
                     "average_salary": f"{average_salary:,}₽",
                 },
-            }
+            },
         )
 
     return statistic
