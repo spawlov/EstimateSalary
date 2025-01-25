@@ -28,7 +28,7 @@ poetry shell
 ```
 
 - Получите API токен на сайте [SuperJob](https://api.superjob.ru/)
-
+- Зарегистрируйте приложение на сайте [HeadHunter](https://dev.hh.ru/)
 - Создайте файл ```.env```
 
 ```text
@@ -37,6 +37,10 @@ CITY=Москва (Город, по которому будет производ
 DAYS=30 (Период, за который будет производиться поиск вакансий)
 
 SJ_KEY=<API_TOKEN_SUPER_JOB>
+
+HH_REDIRECT_URI=https://example.com/redirect/
+HH_CLIENT_ID=<CLIENT_ID_HEAD_HUNTER>
+HH_CLIENT_SECRET=<CLIENT_SECRET_HEAD_HUNTER>
 ```
 
 - Программа запускается командой:
@@ -44,6 +48,8 @@ SJ_KEY=<API_TOKEN_SUPER_JOB>
 ```shell
 python main.py
 ```
+
+***Важно! После первого запуска приложения откроется браузер - нужно авторизоваться на сайте hh.ru и получить одноразовый код (в адресной строке вашей странице редиректа), который нужно ввести в терминал. Будет создан файл `.hh_credentials.json` с токенами hh.ru***
 
 <hr>
 
