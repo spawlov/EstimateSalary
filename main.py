@@ -59,9 +59,9 @@ async def main() -> None:
     load_dotenv(find_dotenv())
 
     sj_key: str = os.environ["SJ_KEY"]
-    hh_uri = os.environ["HH_REDIRECT_URI"]
-    hh_id = os.environ["HH_CLIENT_ID"]
-    hh_secret = os.environ["HH_CLIENT_SECRET"]
+    hh_uri: str = os.environ["HH_REDIRECT_URI"]
+    hh_id: str = os.environ["HH_CLIENT_ID"]
+    hh_secret: str = os.environ["HH_CLIENT_SECRET"]
     languages: list[str] = os.getenv("LANGS", "JavaScript, Java, Python").split(",")
     city: str | None = os.getenv("CITY", None)
     days_ago: int = int(os.getenv("DAYS", 30))
