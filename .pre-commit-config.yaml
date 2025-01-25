@@ -26,11 +26,15 @@ repos:
           - flake8-variables-names
           - pep8-naming
         exclude: ./migrations/
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+#  - repo: https://github.com/pycqa/isort
+  - repo: local
+#    rev: 5.13.2
     hooks:
       - id: isort
-        name: isort (python)
+        name: isort
+        entry: isort .
+        language: system
+        types: [ python ]
   - repo: 'https://github.com/psf/black.git'
     rev: 24.10.0
     hooks:
