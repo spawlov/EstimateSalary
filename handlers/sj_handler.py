@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
+from fake_useragent import UserAgent
 
 from handlers.handler_utils import predict_rub_salary
 
@@ -21,10 +22,9 @@ async def get_vacancies_from_sj(
     results_per_page = 100
 
     base_url = "https://api.superjob.ru/2.0/"
+    user_agent = UserAgent()
     headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/39.0.2171.95 Safari/537.36",
+        "User-Agent": user_agent.random,
         "X-Api-App-Id": secret_key,
     }
     params = {

@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
+from fake_useragent import UserAgent
 
 from .handler_utils import predict_rub_salary
 
@@ -21,7 +22,11 @@ def find_city(areas: Any, city_name: str) -> int:
 
 async def get_hh_city_id(city_name: str) -> int:
     base_url = "https://api.hh.ru/"
-    async with httpx.AsyncClient(base_url=base_url) as client:
+    user_agent = UserAgent()
+    headers = {
+        "User-Agent": user_agent.random,
+    }
+    async with httpx.AsyncClient(base_url=base_url, headers=headers) as client:
         response = await client.get(url="areas/", timeout=30)
     response.raise_for_status()
     areas = response.json()
@@ -38,10 +43,9 @@ async def get_vacancies_from_hh(
     date_days_ago = today - timedelta(days=days_ago)
 
     base_url = "https://api.hh.ru/"
+    user_agent = UserAgent()
     headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/39.0.2171.95 Safari/537.36",
+        "User-Agent": user_agent.random,
         "Authorization": f"Bearer {hh_key}",
     }
     params = {
