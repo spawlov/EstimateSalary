@@ -78,7 +78,7 @@ async def main() -> None:
         hh_code = input("Введите код из адресной строки браузера...\n ").strip()
         await create_hh_credentials(hh_uri, hh_id, hh_code, hh_secret)
 
-    hh_key = await get_hh_token()
+    hh_key, expires_in = await get_hh_token()
 
     logger.info("SuperJob process started...")
     time_start = time()
@@ -93,6 +93,7 @@ async def main() -> None:
     time_end = time()
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
     logger.info(f"HeadHunter process is completed in {time_end - time_start} sec.")
+    logger.warning(f"The token will live for another {(expires_in - int(time())) / 3600 / 24:.2f} days.")
 
 
 if __name__ == "__main__":

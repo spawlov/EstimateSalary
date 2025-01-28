@@ -49,12 +49,12 @@ async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
     return credentials
 
 
-async def get_hh_token() -> str:
+async def get_hh_token() -> tuple[str, int]:
     async with aiofiles.open(".hh_credentials.json", "r", encoding="utf-8") as file:
         credentials = json.loads(await file.read())
     if credentials["expires_in"] <= time():
         credentials = await refresh_hh_token(credentials["refresh_token"])
-    return credentials["access_token"]
+    return credentials["access_token"], credentials["expires_in"]
 
 
 async def predict_rub_salary(salary_from: int, salary_to: int) -> int:
