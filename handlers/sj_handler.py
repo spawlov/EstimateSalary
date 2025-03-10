@@ -6,7 +6,6 @@ from typing import Any
 
 import httpx
 from fake_useragent import UserAgent
-
 from handlers.handler_utils import predict_rub_salary
 
 
@@ -27,7 +26,7 @@ async def get_vacancies_from_sj(
         "User-Agent": user_agent.random,
         "X-Api-App-Id": secret_key,
     }
-    params = {
+    params: dict[str, Any] = {
         "date_published_from": date_days_ago,
         "date_published_to": today,
         "catalogues": catalog,

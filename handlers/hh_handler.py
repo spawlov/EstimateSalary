@@ -9,14 +9,24 @@ from fake_useragent import UserAgent
 from .handler_utils import predict_rub_salary
 
 
+def search_in_area(area: Any, city_name: str):
+    city_name_lower = city_name.lower()
+    area_name_lower = area["name"].lower()
+
+    if area_name_lower == city_name_lower:
+        return area.get("id", 0)
+
+    sub_areas = area.get("areas")
+    if sub_areas:
+        return find_city(sub_areas, city_name)
+    return 0
+
+
 def find_city(areas: Any, city_name: str) -> int:
     for area in areas:
-        if area["name"].lower() == city_name.lower():
-            return area["id"]
-        if "areas" in area:
-            city_id = find_city(area["areas"], city_name)
-            if city_id:
-                return city_id
+        city_id = search_in_area(area, city_name)
+        if city_id:
+            return city_id
     return 0
 
 
@@ -48,7 +58,7 @@ async def get_vacancies_from_hh(
         "User-Agent": user_agent.random,
         "Authorization": f"Bearer {hh_key}",
     }
-    params = {
+    params: dict[str, Any] = {
         "text": language.strip(),
         "per_page": 100,
         "date_from": date_days_ago.strftime("%Y-%m-%d"),

@@ -9,9 +9,8 @@ from typing import Any
 
 from dotenv import find_dotenv, load_dotenv
 from furl import furl
-from terminaltables import SingleTable
-
 from handlers import create_hh_credentials, get_hh_token, get_stats_from_hh, get_stats_from_sj
+from terminaltables import SingleTable
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -93,7 +92,7 @@ async def main() -> None:
     time_end = time()
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
     logger.info(f"HeadHunter process is completed in {time_end - time_start} sec.")
-    logger.warning(f"The token will live for another {(expires_in - int(time())) / 3600 / 24:.2f} days.")
+    logger.warning(f"The token will live for another {(expires_in - int(time())) / 3600 / 24:.6f} days.")
 
 
 if __name__ == "__main__":

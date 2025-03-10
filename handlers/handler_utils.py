@@ -1,10 +1,13 @@
 import json
+import logging
 import os
 from time import time
 from typing import Any
 
 import aiofiles
 import httpx
+
+logger = logging.getLogger(__name__)
 
 
 async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret: str) -> None:
@@ -30,6 +33,7 @@ async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret
 
 
 async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
+    logger.info("Refresh API-token for Head Hunter...")
     url = "https://hh.ru/oauth/token"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -46,6 +50,7 @@ async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
     async with aiofiles.open(".hh_credentials.json", "w", encoding="utf-8") as file:
         await file.write(json.dumps(credentials))
         os.chmod(".hh_credentials.json", 0o600)
+    logger.info("Token success updated")
     return credentials
 
 
