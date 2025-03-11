@@ -9,8 +9,9 @@ from typing import Any
 
 from dotenv import find_dotenv, load_dotenv
 from furl import furl
-from handlers import create_hh_credentials, get_hh_token, get_stats_from_hh, get_stats_from_sj
 from terminaltables import SingleTable
+
+from handlers import create_hh_credentials, get_hh_token, get_stats_from_hh, get_stats_from_sj  # noqa: I100, I202
 
 logger: Logger = logging.getLogger(__name__)
 

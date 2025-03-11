@@ -11,7 +11,7 @@ httpx = "^0.28.1"
 python-dotenv = "^1.0.1"
 terminaltables = "^3.1.10"
 aiofiles = "^24.1.0"
-furl = "^2.1.3"
+furl = "^2.1.4"
 fake-useragent = "^2.0.3"
 
 
@@ -41,20 +41,7 @@ skip_gitignore = true
 order_by_type = false
 
 [tool.flake8]
-ignore = [
-    'D100',  # Missing docstring in public module
-    'D101',  # Missing docstring in public class
-    'D102',  # Missing docstring in public method
-    'D103',  # Missing docstring in public function
-    'D104',  # Missing docstring in public package
-    'D105',  # Missing docstring in magic method
-    'D106',  # Missing docstring in public nested class
-    'D107',  # Missing docstring in __init__
-    'S101',
-    'W503',  # Line break occurred before a binary operator, conflicts with W504:
-             # https://github.com/mila-iqia/cookiecutter-pyml/issues/10
-]
 max-line-length = 120
-max-complexity = 9
+max-complexity = 7
 count = true
 import-order-style = "edited"

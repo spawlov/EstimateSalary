@@ -6,7 +6,8 @@ from typing import Any
 
 import httpx
 from fake_useragent import UserAgent
-from handlers.handler_utils import predict_rub_salary
+
+from handlers.handler_utils import predict_rub_salary  # noqa: I202
 
 
 async def get_vacancies_from_sj(
