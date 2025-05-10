@@ -72,7 +72,7 @@ async def main() -> None:
     sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
     time_end = time()
     print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
-    logger.info(f"SuperJob process is completed in {time_end - time_start} sec.")
+    logger.info(f"SuperJob process is completed in {round(time_end - time_start, 2)} sec.")
 
     logger.info("HeadHunter process started...")
     if not Path(".hh_credentials.json").exists():
@@ -91,8 +91,8 @@ async def main() -> None:
     hh_result = await get_stats_from_hh(hh_key, languages, city, days_ago)
     time_end = time()
     print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
-    logger.info(f"HeadHunter process is completed in {time_end - time_start} sec.")
-    logger.warning(f"The token will live for another {(expires_in - int(time())) / 3600 / 24:.6f} days.")
+    logger.info(f"HeadHunter process is completed in {round(time_end - time_start, 2)} sec.")
+    logger.warning(f"The token will live for another {round((expires_in - int(time())) / 3600 / 24, 2)} days.")
 
 
 if __name__ == "__main__":
