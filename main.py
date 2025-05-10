@@ -67,6 +67,14 @@ async def main() -> None:
     city: str | None = os.getenv("CITY", None)
     days_ago: int = int(os.getenv("DAYS", 30))
 
+    logger.info("SuperJob process started...")
+    time_start = time()
+    sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
+    time_end = time()
+    print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
+    logger.info(f"SuperJob process is completed in {time_end - time_start} sec.")
+
+    logger.info("HeadHunter process started...")
     if not Path(".hh_credentials.json").exists():
         url = furl("https://hh.ru/oauth/authorize")
         params = {
@@ -78,17 +86,7 @@ async def main() -> None:
         webbrowser.open(url.set(params).url)
         hh_code = input("Введите код из адресной строки браузера...\n ").strip()
         await create_hh_credentials(hh_uri, hh_id, hh_code, hh_secret)
-
     hh_key, expires_in = await get_hh_token()
-
-    logger.info("SuperJob process started...")
-    time_start = time()
-    sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
-    time_end = time()
-    print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
-    logger.info(f"SuperJob process is completed in {time_end - time_start} sec.")
-
-    logger.info("HeadHunter process started...")
     time_start = time()
     hh_result = await get_stats_from_hh(hh_key, languages, city, days_ago)
     time_end = time()
