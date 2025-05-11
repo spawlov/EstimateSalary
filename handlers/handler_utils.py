@@ -10,6 +10,23 @@ import httpx
 logger = logging.getLogger(__name__)
 
 
+async def fetch_and_store_credentials(
+    url: str,
+    headers: dict[str, str],
+    params: dict[str, str],
+    filename: str,
+) -> dict[str, str]:
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url=url, headers=headers, params=params)
+    response.raise_for_status()
+    credentials = response.json()
+    credentials["expires_in"] += int(time())
+    async with aiofiles.open(filename, "w", encoding="utf-8") as file:
+        await file.write(json.dumps(credentials))
+        os.chmod(filename, 0o600)
+    return credentials
+
+
 async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret: str) -> None:
     url = "https://hh.ru/oauth/token"
     headers = {
@@ -22,14 +39,7 @@ async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret
         "code": hh_code,
         "grant_type": "authorization_code",
     }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url=url, headers=headers, params=params)
-    response.raise_for_status()
-    credentials = response.json()
-    credentials["expires_in"] += int(time())
-    async with aiofiles.open(".hh_credentials.json", "w", encoding="utf-8") as file:
-        await file.write(json.dumps(credentials))
-        os.chmod(".hh_credentials.json", 0o600)
+    _ = await fetch_and_store_credentials(url, headers, params, filename=".hh_credentials.json")
 
 
 async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
@@ -42,14 +52,7 @@ async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
         "grant_type": "refresh_token",
         "refresh_token": refresh_token,
     }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url=url, headers=headers, params=params)
-    response.raise_for_status()
-    credentials = response.json()
-    credentials["expires_in"] += int(time())
-    async with aiofiles.open(".hh_credentials.json", "w", encoding="utf-8") as file:
-        await file.write(json.dumps(credentials))
-        os.chmod(".hh_credentials.json", 0o600)
+    credentials = await fetch_and_store_credentials(url, headers, params, filename=".hh_credentials.json")
     logger.info("Token success updated")
     return credentials
 
