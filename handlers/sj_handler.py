@@ -15,7 +15,7 @@ async def get_vacancies_from_sj(
     language: str,
     days_ago: int,
     city: str | None = None,
-) -> tuple[str, dict[str, list]]:
+) -> tuple[str, dict[str, list[Any]]]:
     today = int(time.time())
     date_days_ago = int((datetime.now() - timedelta(days=days_ago)).timestamp())
     catalog = 33  # https://api.superjob.ru/2.0/catalogues/

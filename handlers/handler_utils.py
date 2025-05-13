@@ -15,11 +15,11 @@ async def fetch_and_store_credentials(
     headers: dict[str, str],
     params: dict[str, str],
     filename: str,
-) -> dict[str, str]:
+) -> dict[str, Any]:
     async with httpx.AsyncClient() as client:
         response = await client.post(url=url, headers=headers, params=params)
     response.raise_for_status()
-    credentials = response.json()
+    credentials: dict[str, Any] = response.json()
     credentials["expires_in"] += int(time())
     async with aiofiles.open(filename, "w", encoding="utf-8") as file:
         await file.write(json.dumps(credentials))
@@ -39,7 +39,7 @@ async def create_hh_credentials(hh_uri: str, hh_id: str, hh_code: str, hh_secret
         "code": hh_code,
         "grant_type": "authorization_code",
     }
-    _ = await fetch_and_store_credentials(url, headers, params, filename=".hh_credentials.json")
+    _ = await fetch_and_store_credentials(url, headers, params, ".hh_credentials.json")
 
 
 async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
@@ -52,7 +52,7 @@ async def refresh_hh_token(refresh_token: str) -> dict[str, Any]:
         "grant_type": "refresh_token",
         "refresh_token": refresh_token,
     }
-    credentials = await fetch_and_store_credentials(url, headers, params, filename=".hh_credentials.json")
+    credentials: dict[str, Any] = await fetch_and_store_credentials(url, headers, params, ".hh_credentials.json")
     logger.info("Token success updated")
     return credentials
 

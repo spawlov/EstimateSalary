@@ -9,7 +9,7 @@ from fake_useragent import UserAgent
 from .handler_utils import predict_rub_salary
 
 
-def search_in_area(area: Any, city_name: str):
+def search_in_area(area: Any, city_name: str) -> int | Any:
     city_name_lower = city_name.lower()
     area_name_lower = area["name"].lower()
 
@@ -48,7 +48,7 @@ async def get_vacancies_from_hh(
     language: str,
     city_id: int,
     days_ago: int,
-) -> tuple[str, dict[str, list]]:
+) -> tuple[str, dict[str, list[Any]]]:
     today = datetime.now()
     date_days_ago = today - timedelta(days=days_ago)
 
