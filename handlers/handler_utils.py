@@ -65,7 +65,7 @@ async def get_hh_token() -> tuple[str, int]:
     return credentials["access_token"], credentials["expires_in"]
 
 
-async def predict_rub_salary(salary_from: int, salary_to: int) -> int:
+def predict_rub_salary(salary_from: int, salary_to: int) -> int:
     if salary_from and salary_to:
         return round((salary_from + salary_to) / 2)
     if salary_from:

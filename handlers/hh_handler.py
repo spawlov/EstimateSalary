@@ -100,9 +100,7 @@ async def get_stats_from_hh(
         vacancies = [vacancy for vacancy in vacancies if vacancy["salary"]["currency"] == "RUR"]
 
         if len(vacancies):
-            salaries = [
-                await predict_rub_salary(vacancy["salary"]["from"], vacancy["salary"]["to"]) for vacancy in vacancies
-            ]
+            salaries = [predict_rub_salary(vacancy["salary"]["from"], vacancy["salary"]["to"]) for vacancy in vacancies]
             average_salary = int(sum(salaries) / len(vacancies))
 
         statistic.append(

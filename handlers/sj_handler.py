@@ -70,9 +70,7 @@ async def get_stats_from_sj(
         ]
 
         if len(vacancies):
-            salaries = [
-                await predict_rub_salary(vacancy["payment_from"], vacancy["payment_to"]) for vacancy in vacancies
-            ]
+            salaries = [predict_rub_salary(vacancy["payment_from"], vacancy["payment_to"]) for vacancy in vacancies]
             average_salary = int(sum(salaries) / len(vacancies))
 
         statistic.append(
