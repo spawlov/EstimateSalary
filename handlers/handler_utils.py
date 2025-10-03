@@ -1,8 +1,10 @@
 import json
 import logging
 import os
+from contextlib import ContextDecorator
 from time import time
-from typing import Any
+from types import TracebackType
+from typing import Any, Type
 
 import aiofiles
 import httpx
@@ -74,3 +76,56 @@ def predict_rub_salary(salary_from: int, salary_to: int) -> int:
         return round(salary_to * 0.8)
     if not salary_from and not salary_to:
         return 0
+
+
+class Timer(ContextDecorator):
+
+    def __init__(self, name: str | None = None, log: logging.Logger | None = None):
+        self.name = name
+        self.logger = log or logging.getLogger()
+        self._start_time: float = 0
+        self._end_time: float = 0
+        self._elapsed_time: float = 0
+
+    def __enter__(self) -> "Timer":
+        self._start_time = time()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> bool:
+        result = False
+        self._end_time = time()
+        self._elapsed_time = self._end_time - self._start_time
+
+        timer_name = f" '{self.name}'" if self.name else ""
+        self.logger.info("Elapsed time%s: %.4f sec.", timer_name, self._elapsed_time)
+
+        return result  # Исключения не перехватываются
+
+    @property
+    def elapsed(self) -> float | None:
+        return self._elapsed_time
+
+    def get_elapsed(self) -> float | None:
+        return self._elapsed_time
+
+    def reset(self) -> None:
+        self._start_time = 0
+        self._end_time = 0
+        self._elapsed_time = 0
+
+    @property
+    def is_running(self) -> bool:
+        return self._start_time is not None and self._elapsed_time is None
+
+    def __str__(self) -> str:
+        if self._elapsed_time != 0:
+            return f"Timer({self.name or ''}): {self._elapsed_time:.4f}s"
+        elif self.is_running:
+            return f"Timer({self.name or ''}): running"
+        else:
+            return f"Timer({self.name or ''}): not started"

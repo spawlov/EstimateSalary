@@ -12,7 +12,13 @@ from dotenv import find_dotenv, load_dotenv
 from furl import furl
 from terminaltables import SingleTable
 
-from handlers import create_hh_credentials, get_hh_token, get_stats_from_hh, get_stats_from_sj  # noqa: I100, I202
+from handlers import (  # noqa: I100, I202
+    create_hh_credentials,
+    get_hh_token,
+    get_stats_from_hh,
+    get_stats_from_sj,
+    Timer,
+)
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -68,11 +74,9 @@ async def main() -> None:
     days_ago: int = int(os.getenv("DAYS", 30))
 
     logger.info("SuperJob process started...")
-    time_start = time()
-    sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
-    time_end = time()
-    print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
-    logger.info(f"SuperJob process is completed in {round(time_end - time_start, 2)} sec.")
+    with Timer("SuperJob Timer"):
+        sj_results = await get_stats_from_sj(sj_key, languages, city, days_ago)
+        print_table(f" SuperJob. {city}, {days_ago} дней ", sj_results)
 
     logger.info("HeadHunter process started...")
     if not Path(".hh_credentials.json").exists():
@@ -87,11 +91,9 @@ async def main() -> None:
         hh_code = input("Введите код из адресной строки браузера...\n ").strip()
         await create_hh_credentials(hh_uri, hh_id, hh_code, hh_secret)
     hh_key, expires_in = await get_hh_token()
-    time_start = time()
-    hh_result = await get_stats_from_hh(hh_key, languages, city, days_ago)
-    time_end = time()
-    print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
-    logger.info(f"HeadHunter process is completed in {round(time_end - time_start, 2)} sec.")
+    with Timer("HeadHunter Timer"):
+        hh_result = await get_stats_from_hh(hh_key, languages, city, days_ago)
+        print_table(f" HeadHunter. {city}, {days_ago} дней ", hh_result)
     logger.warning(f"The token will live for another {round((expires_in - int(time())) / 3600 / 24, 2)} days.")
 
 
